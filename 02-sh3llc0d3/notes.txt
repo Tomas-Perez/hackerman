@@ -1,0 +1,7 @@
+Reading 1000 bytes into the global (BSS) buffer
+prog() name has a length of 52 ints = 208 bytes
+get_name() is copying into prog_name from pos 0 to pos 249 = 250 ints = 1000 bytes
+
+get_name will check each byte in the buffer for a null terminator.
+If any of the 1000 bytes is \x00 the program will crash.
+After checking that none of the 1000 bytes is a \x00, it will copy the buffer into name.
