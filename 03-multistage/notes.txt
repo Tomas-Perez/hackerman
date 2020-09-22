@@ -1,0 +1,15 @@
+64-bit executable
+
+Global buffer is 20 bytes long
+
+*param_1 = buffer._0_8_;
+param_1[1] = buffer._8_8_;
+*(undefined4 *)(param_1 + 2) = buffer._16_4_;
+
+get_name copies global buffer to name buffer.
+    1. Copy 8 bytes from position 0
+    2. Copy 8 bytes from position 8 (position 1 in a 8 byte pointer)
+    3. Copy 4 bytes from position 16 (position 2 in a 4 byte pointer)
+
+name buffer is 32 bytes long (actually 20 bytes but stack alignment rounds up to 32)
+
