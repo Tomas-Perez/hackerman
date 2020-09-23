@@ -1,0 +1,8 @@
+mmap((void *)0x0,0x1000,7,0x22,-1,0)
+
+addr = 0x0
+len = 4096 bytes
+prot = 7 = 111
+flags = 0x22 = 100010
+fd = -1
+offset = 0
