@@ -1,0 +1,14 @@
+Need to connect to server via remote (even if it is running locally), running the process locally does not work as it is not using stdin/stdout.
+
+Even though we can run /bin/sh, as we still dont have stdin, there is no way to interact with the shell through interactive.
+
+No stdin == no way of sending data to the server after running /bin/sh
+No stdout == no way of receiving data from the server after running /bin/sh
+
+How do we run "cat flag" and keep reading and writing to the socket file descriptor??
+
+See:
+- https://0x00sec.org/t/remote-exploit-shellcode-without-sockets/1440 
+- https://0x00sec.org/t/remote-shells-part-i/269
+
+We can reroute stdin, stdout and stderr to the fd of the socket.

@@ -6,3 +6,6 @@ prot = 7 = 111
 flags = 0x22 = 100010
 fd = -1
 offset = 0
+
+For some reason this mmap does not make it possible to do a call back up in the code.
+We need to get the needed addreses of /bin/sh and NULL by doing a call forward and adding an offset to the current instruction pointer.
