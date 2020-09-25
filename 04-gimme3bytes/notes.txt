@@ -9,3 +9,8 @@ offset = 0
 
 For some reason this mmap does not make it possible to do a call back up in the code.
 We need to get the needed addreses of /bin/sh and NULL by doing a call forward and adding an offset to the current instruction pointer.
+
+CORRECTION: This is not true, the mistake was using ni (next instruction) instead of si (step instruction) in gdb. 
+ni makes it so that you don't see any instructions until after a return from a call, as we never
+return from the call in the shellcode gdb stops as the code is in an infinite loop.
+The problem was in the way the execve was called in the CompSec shellcode. A new shellcode of the same type works perfectly.
