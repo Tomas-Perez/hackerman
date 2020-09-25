@@ -1,0 +1,8 @@
+printf is printing the controlled buffer, as there is no size parameter, it will print until it finds a 0x00.
+If we fill the controlled buffer on the stack what is after that is the canary.
+To avoid just printing the canary when this happens, the canaries always start with a 0x00.
+What we can do is overwrite the first byte of the canary to make it different than 0x00 so that printf will print it.
+
+As the reading and printing loops, on the next loop we can overwrite the whole canary with the value we leaked.
+Then we need to overwrite the saved EIP, this is after the saved EBP.
+Finally, we need a shellcode that does not have zeroes.
