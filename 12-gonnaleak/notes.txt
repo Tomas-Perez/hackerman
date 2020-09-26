@@ -1,0 +1,9 @@
+Attempts to leak the EBP were unsuccessful, the main function does not have a regular EBP pointing to the stack like a normal function.
+However a pwndbg command "leakfind" is able to find addresses present on the stack.
+
+leakfind $address
+Will find leaks close to the given $address.
+By giving it an address at the end of the buffer, it was able to find an address pointing to the stack that was 0x20 bytes above the end of the buffer.
+This address then has a fixed offset of 0x158 from the start of the buffer.
+
+For some reason 0x158 was not exactly the start of the buffer, so an additional 0x10 were subtracted from the leak to fall into the nop sled.
