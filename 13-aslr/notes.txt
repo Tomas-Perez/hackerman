@@ -1,0 +1,6 @@
+This binary has ALL protections enabled, so although we can easily leak a stack address, we cannot execute the stack.
+
+However at the start of main it does a call to memprotect, which changes the permissions of 1000 bytes below the GOT.
+This includes the bss buffer at the start.
+Then, from main we can leak the "ebp" (not really ebp, I do not know what it is) and get an address to the source code, libc_csu_fini.
+From there, getting to the bss is just computing an offset. We give the bss address to the EIP, overwrite the correct canary and get a shell.
