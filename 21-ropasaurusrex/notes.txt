@@ -1,0 +1,10 @@
+Binary is stripped, so we cannot just search for "main" in ghidra to find the main. We find the "entry" function which will call libc_start_main with the address of main.
+
+Multistage exploit:
+1. Use a call to the write reference in the binary to leak the libc address of read from the GOT. 
+    The address of read will be available, as read was already called in order to get user input.
+    The buffer is the address for the read entry in the GOT, and we want to read 4 bytes for a 32-bit address. 
+    We make write return to the start of main, in order to get a read again.
+2. From the leaked read address, compute the addresses to system and /bin/sh.
+3. Send a new payload that calls system with /bin/sh using the computed addresses.
+
