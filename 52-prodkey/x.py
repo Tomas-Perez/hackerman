@@ -6,10 +6,10 @@ SIZE = 0x1d
 
 def check_01(key):
     return claripy.And(
-        key[5] == '-',
-        key[0xb] == '-', 
-        key[0x11] == '-',
-        key[0x17] == '-',
+        key[5] == ord('-'),
+        key[0xb] == ord('-'), 
+        key[0x11] == ord('-'),
+        key[0x17] == ord('-'),
     )
 
 def check_02(key):
@@ -58,8 +58,8 @@ def check_0A(key):
 
 def check_0B(key):
     return claripy.And(
-        key[0x14] == 'B',
-        key[0x15] == 'B',
+        key[0x14] == ord('B'),
+        key[0x15] == ord('B'),
     )
 
 def check_0C(key):
@@ -75,10 +75,10 @@ def check_0E(key):
     return ((key[0x1c] - key[9]) - iVar1 & 1) + iVar1 == 1
 
 def check_0F(key):
-    return key[0] == "M"
+    return key[0] == ord("M")
 
 
-key = [claripy.BVS(f'c{i}', 8) for i in range(SIZE)]
+key = [claripy.BVS(f'c{i}', 32) for i in range(SIZE)]
 s = claripy.Solver()
 
 for c in key: # make sure all chars are printable
