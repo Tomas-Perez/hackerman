@@ -1,0 +1,6 @@
+Race condition:
+After registration the user is set to be "restricted".
+If we can login before the "restricted" update is done, we can enter as an "unrestricted" user.
+
+Spin up two threads, one for registration the other for login.
+Try until the database scheduler interleaves the login check in between the registration updates.
