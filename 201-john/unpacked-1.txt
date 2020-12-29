@@ -70,7 +70,7 @@ valid_str:
     0x80497d0:	push   eax
     0x80497d1:	push   0x31
     0x80497d6:	push   0x80495e4
-    0x80497db:	call   0x804922b //unpack(0x80495e4, 0x31) 7th unpack
+    0x80497db:	call   0x804922b //unpack(0x80495e4, 0x31) 7th unpack CRACKED
     0x80497e0:	add    esp,0x10
     0x80497e3:	add    DWORD PTR [ebp-0xc],eax
     0x80497e6:	mov    eax,DWORD PTR [ebp+0x1c]
@@ -390,15 +390,6 @@ Arguments first pass
 02:0008│      0xffffce9c ◂— 0xa66fe7dd      ebp+0x1c other_random_number
 03:000c│      0xffffcea0 ◂— 0x1c            ebp+0x20 number_arg
 
-
-8.06225774809718132019	(raw 0x400280ff01fb00000000)
-
-before:
-3.77216148467810729656e+23
-after:
-3.77225371839847584432e+23
-
-
     0x804945e:	push   ebp
     0x804945f:	mov    ebp,esp
     0x8049461:	sub    esp,0x38
@@ -560,3 +551,96 @@ error:
 return:
     0x8049544:	leave  
     0x8049545:	ret
+
+
+
+---------- DATA ------------
+The following is a long[11] contained in the data section used for verifying the flag in the 8th unpack function
+0804a0a0 dd              ??         DDh
+0804a0a1 e7              ??         E7h
+0804a0a2 6f              ??         6Fh    o
+0804a0a3 a6              ??         A6h
+0804a0a4 1c              ??         1Ch
+0804a0a5 00              ??         00h
+0804a0a6 00              ??         00h
+0804a0a7 00              ??         00h
+0804a0a8 f8              ??         F8h
+0804a0a9 fc              ??         FCh
+0804a0aa 7a              ??         7Ah    z
+0804a0ab 35              ??         35h    5
+0804a0ac 27              ??         27h    '
+0804a0ad 02              ??         02h
+0804a0ae 00              ??         00h
+0804a0af 00              ??         00h
+0804a0b0 15              ??         15h
+0804a0b1 00              ??         00h
+0804a0b2 00              ??         00h
+0804a0b3 00              ??         00h
+0804a0b4 00              ??         00h
+0804a0b5 00              ??         00h
+0804a0b6 00              ??         00h
+0804a0b7 00              ??         00h
+0804a0b8 54              ??         54h    T
+0804a0b9 6c              ??         6Ch    l
+0804a0ba 15              ??         15h
+0804a0bb 5c              ??         5Ch    \
+0804a0bc 6c              ??         6Ch    l
+0804a0bd 01              ??         01h
+0804a0be 00              ??         00h
+0804a0bf 00              ??         00h
+0804a0c0 dd              ??         DDh
+0804a0c1 e7              ??         E7h
+0804a0c2 6f              ??         6Fh    o
+0804a0c3 a6              ??         A6h
+0804a0c4 1c              ??         1Ch
+0804a0c5 00              ??         00h
+0804a0c6 00              ??         00h
+0804a0c7 00              ??         00h
+0804a0c8 66              ??         66h    f
+0804a0c9 ce              ??         CEh
+0804a0ca 3e              ??         3Eh    >
+0804a0cb e9              ??         E9h
+0804a0cc 9d              ??         9Dh
+0804a0cd 00              ??         00h
+0804a0ce 00              ??         00h
+0804a0cf 00              ??         00h
+0804a0d0 54              ??         54h    T
+0804a0d1 6c              ??         6Ch    l
+0804a0d2 15              ??         15h
+0804a0d3 5c              ??         5Ch    \
+0804a0d4 6c              ??         6Ch    l
+0804a0d5 01              ??         01h
+0804a0d6 00              ??         00h
+0804a0d7 00              ??         00h
+0804a0d8 54              ??         54h    T
+0804a0d9 6c              ??         6Ch    l
+0804a0da 15              ??         15h
+0804a0db 5c              ??         5Ch    \
+0804a0dc 6c              ??         6Ch    l
+0804a0dd 01              ??         01h
+0804a0de 00              ??         00h
+0804a0df 00              ??         00h
+0804a0e0 41              ??         41h    A
+0804a0e1 42              ??         42h    B
+0804a0e2 44              ??         44h    D
+0804a0e3 f3              ??         F3h
+0804a0e4 56              ??         56h    V
+0804a0e5 07              ??         07h
+0804a0e6 00              ??         00h
+0804a0e7 00              ??         00h
+0804a0e8 c5              ??         C5h
+0804a0e9 a4              ??         A4h
+0804a0ea 60              ??         60h    `
+0804a0eb 46              ??         46h    F
+0804a0ec 01              ??         01h
+0804a0ed 00              ??         00h
+0804a0ee 00              ??         00h
+0804a0ef 00              ??         00h
+0804a0f0 dd              ??         DDh
+0804a0f1 e7              ??         E7h
+0804a0f2 6f              ??         6Fh    o
+0804a0f3 a6              ??         A6h
+0804a0f4 1c              ??         1Ch
+0804a0f5 00              ??         00h
+0804a0f6 00              ??         00h
+0804a0f7 00              ??         00h
