@@ -1,0 +1,661 @@
+---------- 1st unpack ---------- 
+
+    0x804970e:	push   ebp
+    0x804970f:	mov    ebp,esp
+    0x8049711:	sub    esp,0x18
+    0x8049714:	cmp    DWORD PTR [ebp+0x18],0x1
+    0x8049718:	jg     0x804973a                            // Jump to "valid_str" if input has more than 0 chars
+
+                                                            // Input lenght == 0
+    0x804971a:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x804971d:	mov    eax,DWORD PTR [eax]
+    0x804971f:	sub    esp,0x8
+    0x8049722:	push   eax
+    0x8049723:	push   0x804a0f8                            //"Usage:\n %s flag{<key>}\n"
+    0x8049728:	call   0x8049050 <printf@plt>
+    0x804972d:	add    esp,0x10
+    0x8049730:	sub    esp,0xc
+    0x8049733:	push   0x0
+    0x8049735:	call   0x8049080 <exit@plt>
+
+                                                            // Input lenght > 0
+valid_str:
+    0x804973a:	mov    DWORD PTR [ebp-0xc],0x0
+    0x8049741:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049744:	add    eax,0x4
+    0x8049747:	mov    eax,DWORD PTR [eax]
+    0x8049749:	sub    esp,0x4
+    0x804974c:	push   eax          
+    0x804974d:	push   0x11
+    0x8049752:	push   0x80492a0
+    0x8049757:	call   0x804922b                            //unpack(0x80492a0, 0x11)  HEADER CHECK ("flag{") | 2nd unpack
+    0x804975c:	add    esp,0x10
+    0x804975f:	add    DWORD PTR [ebp-0xc],eax
+    0x8049762:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049765:	add    eax,0x4
+    0x8049768:	mov    eax,DWORD PTR [eax]
+    0x804976a:	sub    esp,0x4
+    0x804976d:	push   eax
+    0x804976e:	push   0x11
+    0x8049773:	push   0x80492e5
+    0x8049778:	call   0x804922b                            //unpack(0x80492e5, 0x11)  END CHECK ("}") | 3rd unpack
+    0x804977d:	add    esp,0x10
+    0x8049780:	add    DWORD PTR [ebp-0xc],eax
+    0x8049783:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049786:	add    eax,0x4
+    0x8049789:	mov    eax,DWORD PTR [eax]
+    0x804978b:	sub    esp,0x4
+    0x804978e:	push   eax
+    0x804978f:	push   0x17
+    0x8049794:	push   0x8049329
+    0x8049799:	call   0x804922b                            //unpack(0x8049329, 0x17) Checks that all characters in the string are non extended ASCII. | 4th unpack 
+    0x804979e:	add    esp,0x10
+    0x80497a1:	add    DWORD PTR [ebp-0xc],eax
+    0x80497a4:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x80497a7:	add    eax,0x4
+    0x80497aa:	mov    eax,DWORD PTR [eax]
+    0x80497ac:	sub    esp,0x4
+    0x80497af:	push   eax
+    0x80497b0:	push   0x18
+    0x80497b5:	push   0x80496ab
+    0x80497ba:	call   0x804922b                            //unpack(0x80496ab, 0x18) 5th unpack   CRACKED
+    0x80497bf:	add    esp,0x10
+    0x80497c2:	add    DWORD PTR [ebp-0xc],eax
+    0x80497c5:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x80497c8:	add    eax,0x4
+    0x80497cb:	mov    eax,DWORD PTR [eax]
+    0x80497cd:	sub    esp,0x4
+    0x80497d0:	push   eax
+    0x80497d1:	push   0x31
+    0x80497d6:	push   0x80495e4
+    0x80497db:	call   0x804922b                            //unpack(0x80495e4, 0x31) 7th unpack   CRACKED
+    0x80497e0:	add    esp,0x10
+    0x80497e3:	add    DWORD PTR [ebp-0xc],eax
+    0x80497e6:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x80497e9:	add    eax,0x4
+    0x80497ec:	mov    eax,DWORD PTR [eax]
+    0x80497ee:	push   0x0
+    0x80497f0:	push   eax
+    0x80497f1:	push   0x27
+    0x80497f6:	push   0x8049546
+    0x80497fb:	call   0x804922b                            //unpack(0x8049546, 0x27)  9th unpack   CRACKED
+    0x8049800:	add    esp,0x10
+    0x8049803:	add    DWORD PTR [ebp-0xc],eax
+    0x8049806:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049809:	add    eax,0x4
+    0x804980c:	mov    eax,DWORD PTR [eax]
+    0x804980e:	sub    esp,0x4
+    0x8049811:	push   eax
+    0x8049812:	push   0x9
+    0x8049817:	push   0x804951f
+    0x804981c:	call   0x804922b                            //unpack(0x804951f, 0x9) 10th unpack. Check that flag size == 0x21
+    0x8049821:	add    esp,0x10
+    0x8049824:	add    DWORD PTR [ebp-0xc],eax
+    0x8049827:	cmp    DWORD PTR [ebp-0xc],0x7              // Check that the "correct checks" accumulator is 7
+    0x804982b:	jne    0x8049848                            // jump to loser if accumulator != 7
+    0x804982d:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049830:	add    eax,0x4
+    0x8049833:	mov    eax,DWORD PTR [eax]
+    0x8049835:	sub    esp,0x8
+    0x8049838:	push   eax
+    0x8049839:	push   0x804a110                            // "You got the flag"
+    0x804983e:	call   0x8049050 <printf@plt>
+    0x8049843:	add    esp,0x10
+    0x8049846:	jmp    0x8049858                            // return
+loser:
+    0x8049848:	sub    esp,0xc
+    0x804984b:	push   0x804a138                            // "Loser"
+    0x8049850:	call   0x8049050 <printf@plt>
+    0x8049855:	add    esp,0x10
+return:
+    0x8049858:	nop
+    0x8049859:	leave  
+    0x804985a:	ret    
+
+
+---------- 2nd unpack ---------- 
+0x80492a0:	push   ebp
+0x80492a1:	mov    ebp,esp
+0x80492a3:	sub    esp,0x18
+0x80492a6:	sub    esp,0x8
+0x80492a9:	push   0x804a039
+0x80492ae:	push   DWORD PTR [ebp+0x18]             // flag str
+0x80492b1:	call   0x8049030 <strstr@plt>           // First occurence of DWORD PTR [ebp+0x18] in 0x804a039 (flag{)
+0x80492b6:	add    esp,0x10
+0x80492b9:	mov    DWORD PTR [ebp-0xc],eax
+0x80492bc:	mov    eax,DWORD PTR [ebp-0xc]
+0x80492bf:	cmp    eax,DWORD PTR [ebp+0x18]
+0x80492c2:	jne    0x80492cb
+0x80492c4:	mov    eax,0x1
+0x80492c9:	jmp    0x80492e3
+0x80492cb:	sub    esp,0x8
+0x80492ce:	push   DWORD PTR [ebp+0x18]
+0x80492d1:	push   0x804a03f                        // Wrong header
+0x80492d6:	call   0x8049050 <printf@plt>
+0x80492db:	add    esp,0x10
+0x80492de:	mov    eax,0x0
+0x80492e3:	leave  
+0x80492e4:	ret
+
+Checks that HEADER == "flag{"
+
+
+---------- 3rd unpack ---------- 
+0x80492e5:	push   ebp
+0x80492e6:	mov    ebp,esp
+0x80492e8:	sub    esp,0x8
+0x80492eb:	sub    esp,0xc
+0x80492ee:	push   DWORD PTR [ebp+0x18]
+0x80492f1:	call   0x8049090 <strlen@plt>
+0x80492f6:	add    esp,0x10
+0x80492f9:	lea    edx,[eax-0x1]
+0x80492fc:	mov    eax,DWORD PTR [ebp+0x18]
+0x80492ff:	add    eax,edx
+0x8049301:	movzx  eax,BYTE PTR [eax]
+0x8049304:	cmp    al,0x7d
+0x8049306:	jne    0x804930f
+0x8049308:	mov    eax,0x1
+0x804930d:	jmp    0x8049327
+0x804930f:	sub    esp,0x8
+0x8049312:	push   DWORD PTR [ebp+0x18]
+0x8049315:	push   0x804a054                    // Wrong end
+0x804931a:	call   0x8049050 <printf@plt>
+0x804931f:	add    esp,0x10
+0x8049322:	mov    eax,0x0
+0x8049327:	leave  
+0x8049328:	ret
+
+Checks that END == "}"
+
+---------- 4th unpack ---------- 
+    0x8049329:	push   ebp
+    0x804932a:	mov    ebp,esp
+    0x804932c:	sub    esp,0x18
+    0x804932f:	sub    esp,0xc
+    0x8049332:	push   DWORD PTR [ebp+0x18]             // flag str ptr
+    0x8049335:	call   0x8049090 <strlen@plt>
+    0x804933a:	add    esp,0x10
+    0x804933d:	mov    DWORD PTR [ebp-0xc],eax          // [ebp-0xc] = str_length
+    0x8049340:	mov    DWORD PTR [ebp-0x10],0x0         // (index) [ebp-0x10] = 0
+    0x8049347:	jmp    0x8049376                        // label3
+label1:
+    0x8049349:	mov    edx,DWORD PTR [ebp-0x10]         // edx = index
+    0x804934c:	mov    eax,DWORD PTR [ebp+0x18]         // eax = flag_str_ptr
+    0x804934f:	add    eax,edx                          // eax = flag_str_ptr + index
+    0x8049351:	movzx  eax,BYTE PTR [eax]               // eax = *(flag_str_ptr + index)
+    0x8049354:	test   al,al                            // eax & eax (first byte as it is a char)
+    0x8049356:	jns    0x8049372                        // jump to label2 if highest order bit of eax & eax is 0. (limits char to 127 or lower, as in non extended ascii).
+    0x8049358:	sub    esp,0x8
+    0x804935b:	push   DWORD PTR [ebp+0x18]
+    0x804935e:	push   0x804a066                        // "Not ascii character in %s\n"
+    0x8049363:	call   0x8049050 <printf@plt>
+    0x8049368:	add    esp,0x10
+    0x804936b:	mov    eax,0x0                          // Return 0 (error)
+    0x8049370:	jmp    0x8049383                        // return
+label2:
+    0x8049372:	add    DWORD PTR [ebp-0x10],0x1         // index++
+label3:
+    0x8049376:	mov    eax,DWORD PTR [ebp-0x10]         // eax = index
+    0x8049379:	cmp    eax,DWORD PTR [ebp-0xc]          // compare(index, str_length)
+    0x804937c:	jl     0x8049349                        // jump to label1 if str_length > index
+    0x804937e:	mov    eax,0x1                          // Return 1 (success)
+return:
+    0x8049383:	leave  
+    0x8049384:	ret
+
+Checks that all characters in the string are non extended ASCII.
+
+---------- 5th unpack ----------
+    0x80496ab:	push   ebp
+    0x80496ac:	mov    ebp,esp
+    0x80496ae:	push   ebx
+    0x80496af:	sub    esp,0x14
+    0x80496b2:	mov    DWORD PTR [ebp-0xc],0x6      // [ebp-0xc] = 0x6 (end)
+    0x80496b9:	mov    DWORD PTR [ebp-0x10],0x1     // [ebp-0x10] = 0x1 (index)
+    0x80496c0:	jmp    0x80496fc                    // label3
+label1:
+    0x80496c2:	mov    eax,DWORD PTR [ebp-0x10]     // eax = index
+    0x80496c5:	add    eax,0x4                      // eax += 4
+    0x80496c8:	mov    edx,eax                      // edx = eax
+    0x80496ca:	mov    eax,DWORD PTR [ebp+0x18]     // eax = flag_str_ptr
+    0x80496cd:	add    eax,edx                      // eax = flag_str_ptr + edx
+    0x80496cf:	movzx  eax,BYTE PTR [eax]           // eax = flag_str_ptr[index + 4] (will loop from 0 to 5 of the "contents" of the flag, as in after the HEADER)
+    0x80496d2:	movsx  ebx,al                       // ebx = eax (current char)
+    0x80496d5:	sub    esp,0x4
+    0x80496d8:	push   DWORD PTR [ebp-0x10]         // push current index
+    0x80496db:	push   0x36
+    0x80496e0:	push   0x8049385
+    0x80496e5:	call   0x804922b                    // unpack(0x8049385, 0x36)  6th unpack(current_index)
+    0x80496ea:	add    esp,0x10
+    0x80496ed:	cmp    ebx,eax                      // Check that 6th_unpack(index) == flag_str_ptr[index + 4]
+    0x80496ef:	je     0x80496f8                    // label2
+    0x80496f1:	mov    eax,0x0                      // Return 0 (error)
+    0x80496f6:	jmp    0x8049709                    // return
+label2:
+    0x80496f8:	add    DWORD PTR [ebp-0x10],0x1     // index++
+label3:
+    0x80496fc:	mov    eax,DWORD PTR [ebp-0x10]
+    0x80496ff:	cmp    eax,DWORD PTR [ebp-0xc]      
+    0x8049702:	jle    0x80496c2                    // jump to label1 if index <= end
+    0x8049704:	mov    eax,0x1                      // Return 1 (success)
+return:
+    0x8049709:	mov    ebx,DWORD PTR [ebp-0x4]      // Restore ebx (callee saved)
+    0x804970c:	leave  
+    0x804970d:	ret
+
+---------- 6th unpack ---------- 
+index = [ebp+0x18] 
+
+magic_number_1 = 5
+magic_number_2 = 0.516666668800000006279
+magic_number_3 = 4
+magic_number_4 = 8.12500003699999950868
+magic_number_5 = 3
+magic_number_6 = 45.8333335800000014615
+magic_number_7 = 2
+magic_number_8 = 109.875000700000001075
+magic_number_9 = 99.6500009300000044732
+magic_number_10 = 83.9999996800000019448
+
+
+0x8049385:	push   ebp
+0x8049386:	mov    ebp,esp
+0x8049388:	sub    esp,0x28
+0x804938b:	fild   DWORD PTR [ebp+0x18]            // load index
+0x804938e:	fld    QWORD PTR ds:0x804a150          // load magic_number_1
+0x8049394:	lea    esp,[esp-0x8]
+0x8049398:	fstp   QWORD PTR [esp]                 // push magic_number_1
+0x804939b:	lea    esp,[esp-0x8]
+0x804939f:	fstp   QWORD PTR [esp]                 // push index
+0x80493a2:	call   0x8049060 <pow@plt>             // pow(index, magic_number_1)
+0x80493a7:	add    esp,0x10
+0x80493aa:	fld    QWORD PTR ds:0x804a158          // load magic_number_2
+0x80493b0:	fmulp  st(1),st                        // pow(index, magic_number_1) * magic_number_2
+0x80493b2:	fstp   QWORD PTR [ebp-0x28]            // [ebp-0x28] = pow(index, magic_number_1) * magic_number_2
+0x80493b5:	fild   DWORD PTR [ebp+0x18]            // load index
+0x80493b8:	fld    QWORD PTR ds:0x804a160          // load magic_number_3
+0x80493be:	lea    esp,[esp-0x8]
+0x80493c2:	fstp   QWORD PTR [esp]                 // push magic_number_3
+0x80493c5:	lea    esp,[esp-0x8]
+0x80493c9:	fstp   QWORD PTR [esp]                 // push index
+0x80493cc:	call   0x8049060 <pow@plt>             // pow(index, magic_number_3)
+0x80493d1:	add    esp,0x10
+0x80493d4:	fld    QWORD PTR ds:0x804a168          // load magic_number_4
+0x80493da:	fmulp  st(1),st                        // pow(index, magic_number_3) * magic_number_4
+0x80493dc:	fsubr  QWORD PTR [ebp-0x28]             
+0x80493df:	fstp   QWORD PTR [ebp-0x28]            // [ebp-0x28] -= pow(index, magic_number_3) * magic_number_4
+0x80493e2:	fild   DWORD PTR [ebp+0x18]            // load index
+0x80493e5:	fld    QWORD PTR ds:0x804a170          // load magic_number_5
+0x80493eb:	lea    esp,[esp-0x8]
+0x80493ef:	fstp   QWORD PTR [esp]                 // push magic_number_5
+0x80493f2:	lea    esp,[esp-0x8]
+0x80493f6:	fstp   QWORD PTR [esp]                 // push index
+0x80493f9:	call   0x8049060 <pow@plt>             // pow(index, magic_number_5)
+0x80493fe:	add    esp,0x10
+0x8049401:	fld    QWORD PTR ds:0x804a178          // load magic_number_6
+0x8049407:	fmulp  st(1),st                        // pow(index, magic_number_5) * magic_number_6
+0x8049409:	fadd   QWORD PTR [ebp-0x28]
+0x804940c:	fstp   QWORD PTR [ebp-0x28]            // [ebp-0x28] += pow(index, magic_number_5) * magic_number_6
+0x804940f:	fild   DWORD PTR [ebp+0x18]            // load index
+0x8049412:	fld    QWORD PTR ds:0x804a180          // load magic_number_7
+0x8049418:	lea    esp,[esp-0x8]                
+0x804941c:	fstp   QWORD PTR [esp]                 // push magic_number_7
+0x804941f:	lea    esp,[esp-0x8]                   
+0x8049423:	fstp   QWORD PTR [esp]                 // push index
+0x8049426:	call   0x8049060 <pow@plt>             // pow(index, magic_number_7)
+0x804942b:	add    esp,0x10
+0x804942e:	fld    QWORD PTR ds:0x804a188          // load magic_number_8
+0x8049434:	fmulp  st(1),st                        // pow(index, magic_number_7) * magic_number_8
+0x8049436:	fld    QWORD PTR [ebp-0x28]            // load [ebp-0x28]
+0x8049439:	fsubp  st(1),st                        // ST0 = pow(index, magic_number_7) * magic_number_8 - [ebp-0x28]
+0x804943b:	fild   DWORD PTR [ebp+0x18]            // load index
+0x804943e:	fld    QWORD PTR ds:0x804a190          // load magic_number_9
+0x8049444:	fmulp  st(1),st                        // ST0 = magic_number_9 * index
+0x8049446:	faddp  st(1),st                        // ST0 = magic_number_9 * index + (pow(index, magic_number_7) * magic_number_8 - [ebp-0x28])
+0x8049448:	fld    QWORD PTR ds:0x804a198          // load magic_number_10
+0x804944e:	faddp  st(1),st                        // ST0 += magic_number_10
+0x8049450:	fstp   DWORD PTR [ebp-0xc]             // [ebp-0xc] = ST0
+0x8049453:	movss  xmm0,DWORD PTR [ebp-0xc]        // xmm0 = [ebp-0xc]
+0x8049458:	cvttss2si eax,xmm0                     // eax = int(xmm0)
+0x804945c:	leave  
+0x804945d:	ret 
+
+
+---------- 7th unpack ----------
+    0x80495e4:	push   ebp
+    0x80495e5:	mov    ebp,esp
+    0x80495e7:	push   edi
+    0x80495e8:	push   esi
+    0x80495e9:	push   ebx
+    0x80495ea:	sub    esp,0x8c
+    0x80495f0:	mov    eax,DWORD PTR [ebp+0x18]
+    0x80495f3:	mov    DWORD PTR [ebp-0x8c],eax
+    0x80495f9:	mov    eax,gs:0x14
+    0x80495ff:	mov    DWORD PTR [ebp-0x1c],eax
+    0x8049602:	xor    eax,eax
+    0x8049604:	lea    eax,[ebp-0x78]
+    0x8049607:	mov    ebx,0x804a0a0
+    0x804960c:	mov    edx,0x16
+    0x8049611:	mov    edi,eax
+    0x8049613:	mov    esi,ebx
+    0x8049615:	mov    ecx,edx
+    0x8049617:	rep movs DWORD PTR es:[edi],DWORD PTR ds:[esi]
+    0x8049619:	mov    DWORD PTR [ebp-0x7c],0x0
+    0x8049620:	jmp    0x8049687                        //label4
+label1:
+    0x8049622:	mov    eax,DWORD PTR [ebp-0x7c]
+    0x8049625:	mov    edx,DWORD PTR [ebp+eax*8-0x74]
+    0x8049629:	mov    eax,DWORD PTR [ebp+eax*8-0x78]
+    0x804962d:	mov    ecx,DWORD PTR [ebp-0x7c]
+    0x8049630:	add    ecx,0xb
+    0x8049633:	mov    ebx,ecx
+    0x8049635:	mov    ecx,DWORD PTR [ebp-0x8c]         // First pass it grabs the string starting from index 11
+    0x804963b:	add    ecx,ebx          
+    0x804963d:	movzx  ecx,BYTE PTR [ecx]               // Grab char at index
+    0x8049640:	movsx  ecx,cl
+    0x8049643:	sub    esp,0xc
+    0x8049646:	push   edx                              // most significant bytes of long
+    0x8049647:	push   eax                              // least significant bytes of long
+    0x8049648:	push   ecx                              // char
+    0x8049649:	push   0x30
+    0x804964e:	push   0x804945e
+    0x8049653:	call   0x804922b                        // unpack(0x804945e, 0x30) 8th unpack
+    0x8049658:	add    esp,0x20
+    0x804965b:	test   eax,eax
+    0x804965d:	jne    0x8049666                        //8th unpack success (eax not zero)
+    0x804965f:	mov    eax,0x0                          //error
+    0x8049664:	jmp    0x8049692                        //canary_check
+8_success:
+    0x8049666:	mov    eax,DWORD PTR [ebp-0x8c]
+    0x804966c:	add    eax,0x11
+    0x804966f:	movzx  eax,BYTE PTR [eax]
+    0x8049672:	movsx  eax,al
+    0x8049675:	and    eax,0x1
+    0x8049678:	test   eax,eax
+    0x804967a:	jne    0x8049683                        // label3
+    0x804967c:	mov    eax,0x0                          // error
+    0x8049681:	jmp    0x8049692                        // canary_check
+label3:
+    0x8049683:	add    DWORD PTR [ebp-0x7c],0x1
+label4:
+    0x8049687:	cmp    DWORD PTR [ebp-0x7c],0xa
+    0x804968b:	jle    0x8049622                        // label1
+    0x804968d:	mov    eax,0x1                          // success
+canary_check:
+    0x8049692:	mov    edx,DWORD PTR [ebp-0x1c]
+    0x8049695:	xor    edx,DWORD PTR gs:0x14
+    0x804969c:	je     0x80496a3                        // return
+    0x804969e:	call   0x8049070 <__stack_chk_fail@plt>
+return:
+    0x80496a3:	lea    esp,[ebp-0xc]
+    0x80496a6:	pop    ebx                              // cleanup
+    0x80496a7:	pop    esi                              // cleanup
+    0x80496a8:	pop    edi                              // cleanup
+    0x80496a9:	pop    ebp                              // cleanup
+    0x80496aa:	ret
+
+
+---------- 8th unpack ----------
+Arguments first pass
+
+01:0004│      0xffffce98 ◂— 0x41 /* 'A' */  ebp+0x18 char_arg
+02:0008│      0xffffce9c ◂— 0xa66fe7dd      ebp+0x1c least significant bytes of long (lsb_long)
+03:000c│      0xffffcea0 ◂— 0x1c            ebp+0x20 most significant bytes of long  (msb_long)
+
+    0x804945e:	push   ebp
+    0x804945f:	mov    ebp,esp
+    0x8049461:	sub    esp,0x38
+    0x8049464:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x8049467:	mov    DWORD PTR [ebp-0x20],eax     // store lsb_long at [ebp-0x20]
+    0x804946a:	mov    eax,DWORD PTR [ebp+0x20]
+    0x804946d:	mov    DWORD PTR [ebp-0x1c],eax     // Move msb_long to [ebp-0x1c]
+    0x8049470:	fild   DWORD PTR [ebp+0x18]         // turn char_arg into float store in ST(0)
+    0x8049473:	sub    esp,0x8
+    0x8049476:	lea    esp,[esp-0x8]
+    0x804947a:	fstp   QWORD PTR [esp]
+    0x804947d:	call   0x80490b0 <sqrt@plt>         // calculate sqrt(char_arg)
+    0x8049482:	add    esp,0x10
+    0x8049485:	fild   DWORD PTR [ebp+0x18]         // turn char_arg into float store in ST(0), sqrt(char_arg) is in ST(1)
+    0x8049488:	fxch   st(1)                        // move ST(0) to ST(1), ST(1) to ST(0). ST(0) = sqrt(char_arg), ST(1) = char_arg
+    0x804948a:	sub    esp,0x8
+    0x804948d:	lea    esp,[esp-0xc]
+    0x8049491:	fstp   TBYTE PTR [esp]
+    0x8049494:	lea    esp,[esp-0xc]
+    0x8049498:	fstp   TBYTE PTR [esp]
+    0x804949b:	call   0x80490c0 <powl@plt>         // pow(char_arg, sqrt(char_arg))
+    0x80494a0:	add    esp,0x20
+    0x80494a3:	fld    TBYTE PTR ds:0x804a1a0       // MAX_LONG
+    0x80494a9:	fxch   st(1)                        // ST(0) = pow(char_arg, sqrt(char_arg)), ST(1) = MAX_LONG
+    0x80494ab:	fcomi  st,st(1)                     // Compare STO with ST1, CF = 1 if ST0 < ST1, CF = 0 otherwise
+    0x80494ad:	fstp   st(1)
+    0x80494af:	jae    0x80494d0                    // jump to else_label if CF = 0
+
+// If pow(char_arg, sqrt(char_arg)) < MAX_LONG
+--------------------- Equal sections
+    0x80494b1:	fnstcw WORD PTR [ebp-0x22]          // Store control word to [ebp-0x22]
+    0x80494b4:	movzx  eax,WORD PTR [ebp-0x22]      // Move control word to eax
+    0x80494b8:	or     ah,0xc                       // Control word | 0xc00
+    0x80494bb:	mov    WORD PTR [ebp-0x24],ax       // [ebp-0x24] = Control word | 0xc00
+    0x80494bf:	fldcw  WORD PTR [ebp-0x24]          // Set control word from [ebp-0x24]
+    0x80494c2:	fistp  QWORD PTR [ebp-0x30]         // Convert ST0 to integer and store it in [ebp-0x30]
+    0x80494c5:	fldcw  WORD PTR [ebp-0x22]          // Set control word to original value
+    0x80494c8:	mov    eax,DWORD PTR [ebp-0x30]     // Eax lower part of the value
+    0x80494cb:	mov    edx,DWORD PTR [ebp-0x2c]     // Edx upper part of the value
+    Now, edx '+' eax = int(pow(char_arg, sqrt(char_arg)))
+---------------------
+    0x80494ce:	jmp    0x80494fb                    //jump to end
+// Else
+else_label:
+    0x80494d0:	fld    TBYTE PTR ds:0x804a1a0       // MAX_LONG
+    0x80494d6:	fsubrp st(1),st                     // st(1) -= st(0) pow(char_arg, sqrt(char_arg)) - MAX_LONG
+
+---------------------  Equal sections
+    0x80494d8:	fnstcw WORD PTR [ebp-0x22]
+    0x80494db:	movzx  eax,WORD PTR [ebp-0x22]
+    0x80494df:	or     ah,0xc
+    0x80494e2:	mov    WORD PTR [ebp-0x24],ax
+    0x80494e6:	fldcw  WORD PTR [ebp-0x24]
+    0x80494e9:	fistp  QWORD PTR [ebp-0x30]
+    0x80494ec:	fldcw  WORD PTR [ebp-0x22]
+    0x80494ef:	mov    eax,DWORD PTR [ebp-0x30]
+    0x80494f2:	mov    edx,DWORD PTR [ebp-0x2c]
+---------------------
+    let result = edx '+' eax
+    result = int(secret_number - pow(char_arg, sqrt(char_arg)))
+
+    0x80494f5:	xor    edx,0x80000000               // If the calculation is still > MAX_LONG, this operation will turn it into 0.
+
+end:
+    0x80494fb:	add    eax,0x15        
+    0x80494fe:	adc    edx,0x0        
+                                                    // result += 0x15
+    0x8049501:	mov    DWORD PTR [ebp-0x10],eax
+    0x8049504:	mov    DWORD PTR [ebp-0xc],edx
+                                                    // store result starting at [ebp-0x10]
+    0x8049507:	mov    eax,DWORD PTR [ebp-0x10]
+    0x804950a:	mov    edx,DWORD PTR [ebp-0xc]
+                                                    // load result back up (does it do anything?)
+    0x804950d:	xor    eax,DWORD PTR [ebp-0x20]     //eax ^= lsb_long
+    0x8049510:	xor    edx,DWORD PTR [ebp-0x1c]     //edx ^= msb_long
+                                                    // result ^= long
+    0x8049513:	or     eax,edx                      // eax |= edx
+    0x8049515:	test   eax,eax
+    0x8049517:	sete   al                           //set al to 1 if eax == 0
+    0x804951a:	movzx  eax,al       
+                                                    // eax = 1 if eax == 0 else 0
+    0x804951d:	leave  
+    0x804951e:	ret 
+
+
+---------- DATA ------------
+The following is a long[11] contained in the data section used for verifying the flag in the 8th unpack function
+0804a0a0 dd              ??         DDh
+0804a0a1 e7              ??         E7h
+0804a0a2 6f              ??         6Fh    o
+0804a0a3 a6              ??         A6h
+0804a0a4 1c              ??         1Ch
+0804a0a5 00              ??         00h
+0804a0a6 00              ??         00h
+0804a0a7 00              ??         00h
+0804a0a8 f8              ??         F8h
+0804a0a9 fc              ??         FCh
+0804a0aa 7a              ??         7Ah    z
+0804a0ab 35              ??         35h    5
+0804a0ac 27              ??         27h    '
+0804a0ad 02              ??         02h
+0804a0ae 00              ??         00h
+0804a0af 00              ??         00h
+0804a0b0 15              ??         15h
+0804a0b1 00              ??         00h
+0804a0b2 00              ??         00h
+0804a0b3 00              ??         00h
+0804a0b4 00              ??         00h
+0804a0b5 00              ??         00h
+0804a0b6 00              ??         00h
+0804a0b7 00              ??         00h
+0804a0b8 54              ??         54h    T
+0804a0b9 6c              ??         6Ch    l
+0804a0ba 15              ??         15h
+0804a0bb 5c              ??         5Ch    \
+0804a0bc 6c              ??         6Ch    l
+0804a0bd 01              ??         01h
+0804a0be 00              ??         00h
+0804a0bf 00              ??         00h
+0804a0c0 dd              ??         DDh
+0804a0c1 e7              ??         E7h
+0804a0c2 6f              ??         6Fh    o
+0804a0c3 a6              ??         A6h
+0804a0c4 1c              ??         1Ch
+0804a0c5 00              ??         00h
+0804a0c6 00              ??         00h
+0804a0c7 00              ??         00h
+0804a0c8 66              ??         66h    f
+0804a0c9 ce              ??         CEh
+0804a0ca 3e              ??         3Eh    >
+0804a0cb e9              ??         E9h
+0804a0cc 9d              ??         9Dh
+0804a0cd 00              ??         00h
+0804a0ce 00              ??         00h
+0804a0cf 00              ??         00h
+0804a0d0 54              ??         54h    T
+0804a0d1 6c              ??         6Ch    l
+0804a0d2 15              ??         15h
+0804a0d3 5c              ??         5Ch    \
+0804a0d4 6c              ??         6Ch    l
+0804a0d5 01              ??         01h
+0804a0d6 00              ??         00h
+0804a0d7 00              ??         00h
+0804a0d8 54              ??         54h    T
+0804a0d9 6c              ??         6Ch    l
+0804a0da 15              ??         15h
+0804a0db 5c              ??         5Ch    \
+0804a0dc 6c              ??         6Ch    l
+0804a0dd 01              ??         01h
+0804a0de 00              ??         00h
+0804a0df 00              ??         00h
+0804a0e0 41              ??         41h    A
+0804a0e1 42              ??         42h    B
+0804a0e2 44              ??         44h    D
+0804a0e3 f3              ??         F3h
+0804a0e4 56              ??         56h    V
+0804a0e5 07              ??         07h
+0804a0e6 00              ??         00h
+0804a0e7 00              ??         00h
+0804a0e8 c5              ??         C5h
+0804a0e9 a4              ??         A4h
+0804a0ea 60              ??         60h    `
+0804a0eb 46              ??         46h    F
+0804a0ec 01              ??         01h
+0804a0ed 00              ??         00h
+0804a0ee 00              ??         00h
+0804a0ef 00              ??         00h
+0804a0f0 dd              ??         DDh
+0804a0f1 e7              ??         E7h
+0804a0f2 6f              ??         6Fh    o
+0804a0f3 a6              ??         A6h
+0804a0f4 1c              ??         1Ch
+0804a0f5 00              ??         00h
+0804a0f6 00              ??         00h
+0804a0f7 00              ??         00h
+
+
+---------- 9th unpack ----------
+[ebp+0x1c] = index
+[ebp+0x18] = flag
+[ebp-0xc] = 0x804a081
+
+    0x8049546:	push   ebp
+    0x8049547:	mov    ebp,esp
+    0x8049549:	push   ebx
+    0x804954a:	sub    esp,0x14
+    0x804954d:	mov    DWORD PTR [ebp-0xc],0x804a081
+    0x8049554:	mov    eax,DWORD PTR [ebp+0x1c]     // eax = index (argument from 1st unpack)
+    0x8049557:	add    eax,0x16                     // eax = 0x16
+    0x804955a:	mov    ebx,eax                      // ebx = 0x16
+    0x804955c:	sub    esp,0xc
+    0x804955f:	push   DWORD PTR [ebp+0x18] 
+    0x8049562:	call   0x8049090 <strlen@plt>       // strlen(flag)
+    0x8049567:	add    esp,0x10
+    0x804956a:	cmp    ebx,eax
+    0x804956c:	jb     0x8049575                    //label1 if unsinged eax > unsigned ebx (due to 10th unpack, this will never work, flag must be of lenght 0x21)
+    0x804956e:	mov    eax,0x1
+    0x8049573:	jmp    0x80495df                    //return
+label1:
+    0x8049575:	mov    edx,DWORD PTR [ebp+0x1c]     //edx = index
+    0x8049578:	mov    eax,DWORD PTR [ebp-0xc]      //eax = 0x804a081
+    0x804957b:	add    eax,edx                      //eax += index
+    0x804957d:	movzx  ecx,BYTE PTR [eax]           //ecx = 0x804a081[index]
+    0x8049580:	mov    eax,DWORD PTR [ebp+0x1c]     //eax = index
+    0x8049583:	lea    edx,[eax+0x14]               //edx = index + 0x14
+    0x8049586:	mov    eax,DWORD PTR [ebp+0x18]     //eax = flag_str_ptr
+    0x8049589:	add    eax,edx                      
+    0x804958b:	movzx  eax,BYTE PTR [eax]           //eax = flag_str_ptr[index+0x14]
+    0x804958e:	xor    eax,ecx                      //eax ^= ecx
+    0x8049590:	mov    BYTE PTR [ebp-0xe],al        //[ebp-0xe] = eax ^ ecx
+    0x8049593:	mov    eax,DWORD PTR [ebp+0x1c]     //eax = index
+    0x8049596:	add    eax,0x15                     //eax += 0x15
+    0x8049599:	mov    edx,eax                      //edx = index + 0x15
+    0x804959b:	mov    eax,DWORD PTR [ebp+0x18] 
+    0x804959e:	add    eax,edx                      
+    0x80495a0:	movzx  eax,BYTE PTR [eax]           //eax = flag_str_ptr[index+0x15]
+    0x80495a3:	mov    BYTE PTR [ebp-0xd],al        //[ebp-0xd] = flag_str_ptr[index+0x15]
+    0x80495a6:	movzx  eax,BYTE PTR [ebp-0xe]       //eax = [ebp-0xe]
+    0x80495aa:	cmp    al,BYTE PTR [ebp-0xd] 
+    0x80495ad:	je     0x80495b6                    //jump to recursive_call if (flag_str_ptr[index+0x14] ^ 0x804a081[index]) == flag_str_ptr[index+0x15]
+    0x80495af:	mov    eax,0x0
+    0x80495b4:	jmp    0x80495df                    //return
+recursive_call:
+    0x80495b6:	mov    eax,DWORD PTR [ebp+0x1c]
+    0x80495b9:	add    eax,0x1
+    0x80495bc:	sub    esp,0x8
+    0x80495bf:	push   eax
+    0x80495c0:	push   DWORD PTR [ebp+0x18]         //flag
+    0x80495c3:	push   0xdeadb00b
+    0x80495c8:	push   0xdeadb00b
+    0x80495cd:	push   0xdeadb00b
+    0x80495d2:	push   0xdeadb00b                   // Push unused values so that the next call will have the arguments where it expects.
+    0x80495d7:	call   0x8049546                    // 9th unpack (recursive call)
+    0x80495dc:	add    esp,0x20
+return:
+    0x80495df:	mov    ebx,DWORD PTR [ebp-0x4]      // Restore ebx (callee saved)
+    0x80495e2:	leave  
+    0x80495e3:	ret 
+
+
+---------- 10th unpack ----------
+0x804951f:	push   ebp
+0x8049520:	mov    ebp,esp
+0x8049522:	sub    esp,0x8
+0x8049525:	sub    esp,0xc
+0x8049528:	push   DWORD PTR [ebp+0x18]     
+0x804952b:	call   0x8049090 <strlen@plt>           // strlen(flag)
+0x8049530:	add    esp,0x10
+0x8049533:	cmp    eax,0x21                         // strlen(flag) == 0x21?
+0x8049536:	jne    0x804953f    //error             // not equal to 0x21
+0x8049538:	mov    eax,0x1
+0x804953d:	jmp    0x8049544    //return            // equal to 0x21
+error:
+    0x804953f:	mov    eax,0x0
+return:
+    0x8049544:	leave  
+    0x8049545:	ret

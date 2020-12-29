@@ -1,11 +1,12 @@
-Unpack function creates a page where the code can write and execute the unpack code.
-This page starts at 0x8049000 and goes up to 0x804a000.
+All relevant functions except for what's needed to unpack the binary and repack it are packed.
+Main starts the program by calling **unpack** at the address of the first function.
 
-unpack(start of code, code_length)
-Unpacks the code, executes it and unpacks it again before returning.
+**unpack**: unpacks a function, calls it and then repacks it again
+- arg[0]: address to the start of the packed function
+- arg[1]: length of the function
 
-First call: unpack(0x0804970e, 0x53)
-    Unpacks code from 0x0804970e to 0x0804985a
+**repack**: repacks a function
+- arg[0]: address to the start of the unpacked function
+- arg[1]: length of the function
 
-Second call: unpack(0x80492a0, 0x11)
-    Unpacks code from 0x80492a0 to 0x080492b1
+The unpacked assembly can be dumped at the time when a function is called in the **unpack** function or when **repack** is called.
